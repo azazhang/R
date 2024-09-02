@@ -1,0 +1,42 @@
+---
+title: "CV"
+output: html_document
+author: "Ang Zhang"
+date: "2024-08-24"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, out.width="20%", out.extra='style="float:right; margin-left:20px;"'}
+knitr::include_graphics("Ang Zhang photo.jpg")
+```
+
+# Ang Zhang
+Bio: PhD student in Finance, Lindner College of Business, University of Cincinnati\
+Email: zhang2a5@mail.uc.edu\
+Website: [link](https://az.azhang.eu.org)\
+
+
+> research interests: empirical asset pricing, market microstructure
+
+---
+## Education
+- PhD in Finance, University of Cincinnati **from 2024**[^1]
+
+
+- MS in Electronics Engineering, Shanghai Jiao Tong University (China) **2013**
+- BS in Electronics Engineering, Hangzhou Dianzi University (China) **2010**
+
+## Work Experience
+- Investment Banking Product Manager **2023**
+- Financial Product Manager **2019**
+- Financial Institutions Product Manager **2015**
+- Management Associate **2013**
+
+## Programming Experience
+- beginner to R
+- other programming language: Python, Matlab, Javascript, C/C++
+
+[^1]: Enrolled from 2024.

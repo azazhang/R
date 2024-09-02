@@ -1,0 +1,89 @@
+---
+title: "Lesson 2a"
+author: "[Ang Zhang](https://az.azhang.eu.org)"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    keep_md: true
+date: "2024-08-23"
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+```{r}
+head(iris)
+```
+
+```{r echo = FALSE}
+x <- rnorm(100)
+y <- 2 * x + rnorm(100)
+cor(x, y)
+```
+
+```{r results = 'hide'}
+x <- rnorm(100)
+y <- 2 * x + rnorm(100)
+cor(x, y)
+```
+
+```{r eval = FALSE}
+x <- rnorm(100)
+y <- 2 * x + rnorm(100)
+cor(x, y)
+```
+
+```{r include = FALSE}
+x <- rnorm(100)
+y <- 2 * x + rnorm(100)
+cor(x, y)
+```
+
+```{r, warning = FALSE, message=FALSE}
+x <- rnorm(100)
+y <- 2 * x + rnorm(100)
+cor(x, y)
+```
+
+```{r, collapse=TRUE}
+head(iris)
+```
+
+```{r, fig.align='center', fig.height=3, fig.width=4}
+library(ggplot2)
+
+ggplot(iris, aes(Sepal.Length, Sepal.Width, color = Species)) +
+        geom_point()
+```
+## Including Plots
+
+This is an example of in-line code: <u>**`r round(mean(mtcars$mpg), 1)`**</u>
+
+```{r, results='asis'}
+knitr::kable(iris)
+```
+
+```{r}
+knitr::kable(head(iris), caption = 'Example caption for the iris data frame')
+```
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

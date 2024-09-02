@@ -1,0 +1,141 @@
+---
+title: "Module 4 Lab"
+author: "Ang Zhang"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(completejourney)
+transactions <- get_transactions()
+dim(transactions)
+promotions <- get_promotions()
+dim(promotions)
+```
+
+```{r}
+transactions %>%
+  semi_join(demographics, by = "household_id") %>%
+  tally()
+transactions %>%
+  anti_join(demographics, by = "household_id") %>%
+  tally()
+```
+
+```{r}
+transactions %>%
+  left_join(demographics, by = "household_id") %>%
+  group_by(age) %>%
+  summarise(total_sales = sum(sales_value)) %>%
+  arrange(desc(total_sales))
+
+```
+```{r}
+hshld_1000 <- transactions %>%
+  group_by(household_id) %>%
+  summarize(total_sales = sum(sales_value, na.rm = T)) %>%
+  filter(total_sales >= 1000)
+hshld_1000
+```
+
+```{r}
+hshld_1000 %>%
+  semi_join(demographics, by = "household_id") %>%
+  tally()
+
+hshld_1000 %>%
+  anti_join(demographics, by = "household_id") %>%
+  tally()
+
+hshld_1000 %>%
+  inner_join(demographics, by = "household_id") %>%
+  group_by(income) %>%
+  summarize(household_count = n()) %>%
+  arrange(desc(household_count))
+```
+
+```{r}
+front_display_trans <- promotions %>%
+  filter(display_location == 1) %>%
+  inner_join(transactions)
+front_display_trans %>%
+  summarize(total_sales = sum(sales_value))
+```
+```{r}
+front_display_trans %>%
+  group_by(product_id) %>%
+  summarize(total_front_display_sales = sum(sales_value)) %>%
+  arrange(desc(total_front_display_sales))
+```
+```{r}
+coupons %>%
+  filter(campaign_id == "18", coupon_upc == "10000089238") %>%
+  inner_join(products, by = "product_id")
+```
+```{r}
+pizza <- products %>%
+  filter(str_detect(product_type, regex("pizza", ignore_case = T)))
+transactions %>%
+  inner_join(pizza, by = "product_id") %>%
+  group_by(product_id, product_type) %>%
+  summarize(total_sales = sum(sales_value)) %>%
+  arrange(desc(total_sales))
+```
+
+```{r}
+relevant_products <- products %>%
+  filter(
+    str_detect(product_category, regex("pizza", ignore_case = T)),
+    str_detect(product_type, regex("snack|appetizer", ignore_case = T))
+  )
+
+relevant_products %>%
+  inner_join(transactions, by = "product_id") %>%
+  group_by(product_id) %>%
+  summarize(total_qty = sum(quantity)) %>%
+  arrange(desc(total_qty))
+
+```
+
+```{r}
+pb <- products %>%
+  filter(str_detect(product_type, regex("peanut butter", ignore_case = T)))
+tally(pb)
+```
+```{r}
+pb %>%
+  inner_join(transactions, by = "product_id") %>%
+  group_by(month = month(transaction_timestamp, label = T)) %>%
+  summarize(total_sales = sum(sales_value)) %>%
+  arrange(desc(total_sales))
+```
+
+```{r}
+coupon_redemptions %>%
+  filter(campaign_id == "18", coupon_upc == "10000085475") %>%
+  summarize(n_distinct(household_id))
+
+coupon_redemptions %>%
+  filter(campaign_id == "18", coupon_upc == "10000085475") %>%
+  inner_join(transactions, by = "household_id") %>%
+  filter(yday(transaction_timestamp) == yday(redemption_date)) %>%
+  summarize(total_sales = sum(sales_value)) 
+
+```
+
+```{r}
+coupon_redemptions %>%
+  filter(campaign_id == "18", coupon_upc == "10000085475") %>%
+  inner_join(coupons) %>%
+  inner_join(products) %>%
+  filter(str_detect(product_category, regex("vegetables", ignore_case = T))) %>%
+  inner_join(transactions, by = c("household_id", "product_id")) %>%
+  filter(yday(transaction_timestamp) == yday(redemption_date)) %>%
+  group_by(product_type) %>%
+  summarize(total_sales = sum(sales_value)) %>%
+  arrange(desc(total_sales))
+
+
+```
+

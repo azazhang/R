@@ -1,0 +1,73 @@
+---
+title: "BANA7051 Assignment 1"
+author: "Ang Zhang"
+date: "2024-08-30"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+```
+
+## A. Sample size of the data.
+
+first load the data, and then take the sample size with nrow() function.
+
+```{r}
+wine <- read.csv("data/winequality-red.csv", sep = ";")
+wine <- select(wine, c("fixed.acidity", "volatile.acidity", "citric.acid"))
+sample_size <- nrow(wine)
+print(paste('sample size is ', sample_size))
+```
+
+## B. Identify outliers
+
+Draw a plot for each of the variables:
+
+```{r}
+for (col_name in colnames(wine))
+  plot(wine[[col_name]], main = paste("distribution of", col_name), ylab = col_name)
+```
+
+One outlier can be observed in the citric.acid variable.
+
+## C. Summarize of data.
+
+The summary() function provides a basic summary of Min, 1st Quantile, median, third quntile, max:
+
+```{r}
+summary(wine)
+```
+
+Moreover, I would like to include standard deviation to give a little bit more insight:
+
+```{r}
+for (col_name in colnames(wine)) {
+  sd = sd(wine[[col_name]])
+  print(paste("standard deviation of ", col_name, ": ", round(sd, 2)))
+}
+
+```
+
+## D. Visualize the distribution of each variable.
+
+Draw a histogram of each variable with hist() function, and draw a density curve on top of it.
+
+```{r}
+for (col_name in colnames(wine)) {
+  hist(wine[[col_name]], main = paste("histogram of", col_name), freq = F, xlab = col_name, ylab = "density")
+  lines(density(wine[[col_name]]), lwd = 5, col = "blue")
+}
+```
+
+## E. Any skewed distribution in D?
+
+The fixed.acidity variable appears to be right skewed. So does the citric.acid variable.
+
+## F. What data mining methods are used in this paper?
+
+The author discussed linear/multiple regression (MR), neural networks (NN), and support vector machines (SVM). MR can be seen as a reduced form of NN when there's no layer of hidden node. Empirical results shows that SVM outperformed NN (and also MR) in this study case, especially for white wine.
