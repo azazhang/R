@@ -1,0 +1,98 @@
+---
+title: "BANA7025 Module 6 Lab"
+author: "Ang Zhang"
+output: html_notebook
+---
+
+
+```{r}
+library(tidyverse)
+library(repurrrsive)
+```
+
+```{r}
+library(here)
+monthly_data_files <- here("./data")
+data_file = list.files(monthly_data_files)
+df <- data_file %>%
+  map_dfr(~readr::read_csv(here(monthly_data_files, .)))
+glimpse(df)
+```
+
+```{r}
+df %>%
+  map(~class(.))
+```
+```{r}
+df %>%
+  map_int(~n_distinct(.))
+```
+
+```{r}
+df <- df %>%
+  mutate(Factor_D = if_else(Factor_D == 26, 25, Factor_D))
+n_distinct(df$Factor_D)
+count(df, Factor_D)
+```
+```{r}
+df <- df %>%
+  filter_at(vars(Factor_A, Factor_B, Factor_C, Factor_D, Factor_E), all_vars(.!="NULL"))
+nrow(df)
+```
+
+```{r}
+df <- df %>%
+  mutate_at(vars(-Transaction_Timestamp, -Month), as.factor) %>%
+  mutate(Month = factor(Month, levels = c("Jan", "Feb", "Mar","Apr", "May", "Jun", "Jul",
+                                          "Aug", "Sep", "Oct", "Nov", "Dec")))
+# make sure all features are changed to factors
+glimpse(df)
+# make sure the Month variable is an ordered factor
+levels(df$Month)
+```
+
+```{r}
+df %>% summarize_if(is.factor, n_distinct)
+```
+```{r}
+df %>%
+  group_by(Transaction_Status) %>%
+  summarize_if(is.factor, n_distinct)
+```
+```{r}
+convert_to_qtr <- function(months) {
+  case_when(
+    months %in% c("Jan", "Feb", "Mar") ~ "Q1",
+    months %in% c("Apr", "May", "Jun") ~ "Q2",
+    months %in% c("Jul", "Aug", "Sep") ~ "Q3",
+    months %in% c("Oct", "Nov", "Dec") ~ "Q4"
+  )
+}
+example_months <- c("Jan", "Mar", "May", "May", "Aug", "Nov", "Nov", "Dec")
+convert_to_qtr(example_months)
+df <- df %>%
+  mutate(Qtr = convert_to_qtr(Month))
+count(df,Qtr)
+```
+```{r}
+sw_people %>% map_chr("name")
+```
+```{r}
+sw_people %>% map_int(~ length(.x$films))
+```
+
+```{r}
+library(ggplot2)
+sw_people %>%
+  map_chr("name") %>% # extract the names
+  set_names(sw_people, nm = .) %>% # set the list names as character names
+  map_df(~ length(.x$films)) %>% # extract number of films and make a data frame
+  pivot_longer( # tidy data frame
+    cols = everything(),
+    names_to = "Character",
+    values_to = "Films"
+  ) %>%
+  ggplot(aes(Films, reorder(Character, Films))) + # plot results
+  geom_point()
+```
+
